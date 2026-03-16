@@ -242,5 +242,6 @@ def finalize_checkin():
 
     return "<h1>Attendance recorded successfully with GPS and selfie!</h1><a href='/'>Go back</a>"    
 init_db()
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
