@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .top-logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .top-info {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            margin-bottom: 40px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .selfie {
+            width: 90px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .empty {
+            text-align: center;
+            font-size: 18px;
+            margin: 20px 0 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-logo">
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Company Logo" width="100">
+    </div>
+
+    <h1>Today's Attendance</h1>
+
+    <div class="top-info">
+        <p>Date: {{ today }}</p>
+        <p>
+            <a href="/employees">Manage Employees</a> |
+            <a href="/logout">Logout</a>
+        </p>
+    </div>
+
+    <h2>Present Workers</h2>
+    {% if present_records %}
+    <table>
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Selfie</th>
+        </tr>
+
+        {% for record in present_records %}
+        <tr>
+            <td>{{ record[0] }}</td>
+            <td>{{ record[1] }}</td>
+            <td>{{ record[2] }}</td>
+            <td>{{ record[3] }}</td>
+            <td>{{ record[4] }}</td>
+            <td>{{ record[5] }}</td>
+            <td>{{ record[6] }}</td>
+            <td>
+                {% if record[7] %}
+                <img class="selfie" src="/{{ record[7] }}" alt="Selfie">
+                {% else %}
+                No selfie
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="empty">No present workers today.</p>
+    {% endif %}
+
+    <h2>Absent Workers</h2>
+    {% if absent_records %}
+    <table>
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Selfie</th>
+        </tr>
+
+        {% for record in absent_records %}
+        <tr>
+            <td>{{ record[0] }}</td>
+            <td>{{ record[1] }}</td>
+            <td>{{ record[2] }}</td>
+            <td>{{ record[3] }}</td>
+            <td>{{ record[4] }}</td>
+            <td>{{ record[5] }}</td>
+            <td>{{ record[6] }}</td>
+            <td>
+                {% if record[7] %}
+                <img class="selfie" src="/{{ record[7] }}" alt="Selfie">
+                {% else %}
+                No selfie
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="empty">No absent workers today.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Check-In</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            width: 420px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        video, canvas {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            background: #ddd;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .msg {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        input[type="hidden"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Final Check-In</h1>
+
+        <p class="msg" id="locationMessage">Location not checked yet.</p>
+
+        <form method="POST" action="/finalize_checkin">
+            <input type="hidden" name="employee_id" value="{{ employee_id }}">
+            <input type="hidden" name="latitude" id="latitude">
+            <input type="hidden" name="longitude" id="longitude">
+            <input type="hidden" name="selfie_data" id="selfie_data">
+
+            <button type="button" onclick="getLocation()">Get My Location</button>
+
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+
+            <button type="button" onclick="startCamera()">Open Camera</button>
+            <button type="button" onclick="takeSelfie()">Take Selfie</button>
+
+            <button type="submit">Finish Attendance</button>
+        </form>
+    </div>
+
+    <script>
+        function getLocation() {
+            const msg = document.getElementById("locationMessage");
+
+            if (!navigator.geolocation) {
+                msg.textContent = "Geolocation is not supported by your browser.";
+                msg.className = "msg error";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    document.getElementById("latitude").value = position.coords.latitude;
+                    document.getElementById("longitude").value = position.coords.longitude;
+                    msg.textContent = "Location captured successfully.";
+                    msg.className = "msg success";
+                },
+                function() {
+                    msg.textContent = "Unable to get location.";
+                    msg.className = "msg error";
+                }
+            );
+        }
+
+        function startCamera() {
+            const video = document.getElementById("video");
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function(error) {
+                    alert("Camera access failed.");
+                });
+        }
+
+        function takeSelfie() {
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const selfieInput = document.getElementById("selfie_data");
+
+            const context = canvas.getContext("2d");
+
+            canvas.width = 320;
+            canvas.height = 240;
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL("image/jpeg", 0.6);
+            selfieInput.value = imageData;
+
+            alert("Selfie captured successfully.");
+        }
+</script>
+</body>
+</html>
