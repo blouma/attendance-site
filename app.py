@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
-import random
 import os
 import base64
 import pandas as pd
@@ -8,8 +7,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "mysecretkey"
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
-current_codes = {}
 
 def init_db():
     conn = sqlite3.connect("attendance.db")
@@ -52,6 +51,8 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     message = ""
@@ -72,17 +73,17 @@ def index():
 
     return render_template("index.html", message=message)
 
+
 @app.route("/verify", methods=["POST"])
 def verify():
     employee_id = request.form["employee_id"]
     entered_code = request.form["code"]
-    real_code = current_codes.get(employee_id)
 
-    if real_code == entered_code:
-        current_codes.pop(employee_id, None)
-        return render_template("checkin.html", employee_id=employee_id)
-    else:
-        return "<h1>Wrong code.</h1><a href='/'>Go back</a>"
+    # kept only so route exists if any old page still posts here
+    # right now the main flow goes directly from index -> checkin
+    return render_template("checkin.html", employee_id=employee_id)
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     message = ""
@@ -98,6 +99,8 @@ def login():
             message = "Wrong username or password."
 
     return render_template("login.html", message=message)
+
+
 @app.route("/admin")
 def admin():
     if not session.get("admin_logged_in"):
@@ -148,10 +151,14 @@ def admin():
         absent_records=absent_records,
         today=today
     )
+
+
 @app.route("/logout")
 def logout():
     session.pop("admin_logged_in", None)
     return redirect(url_for("login"))
+
+
 @app.route("/employees", methods=["GET", "POST"])
 def employees():
     if not session.get("admin_logged_in"):
@@ -177,7 +184,9 @@ def employees():
     all_employees = cur.fetchall()
     conn.close()
 
-    return render_template("employees.html", employees=all_employees, message=message)    
+    return render_template("employees.html", employees=all_employees, message=message)
+
+
 @app.route("/finalize_checkin", methods=["POST"])
 def finalize_checkin():
     employee_id = request.form["employee_id"]
@@ -200,7 +209,7 @@ def finalize_checkin():
     header, encoded = selfie_data.split(",", 1)
     image_bytes = base64.b64decode(encoded)
 
-   filename = f"employee_{employee_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+    filename = f"employee_{employee_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
 
     selfies_folder = os.path.join(app.root_path, "static", "selfies")
     os.makedirs(selfies_folder, exist_ok=True)
@@ -245,7 +254,7 @@ def finalize_checkin():
 
     return f"<h1>Attendance recorded: {status}</h1><a href='/'>Go back</a>"
 
-    return "<h1>Attendance recorded successfully with GPS and selfie!</h1><a href='/'>Go back</a>"    
+
 init_db()
 
 if __name__ == "__main__":
