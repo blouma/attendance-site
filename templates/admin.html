@@ -9,21 +9,17 @@
             margin: 0;
             padding: 30px;
         }
-
         h1, h2 {
             text-align: center;
         }
-
         .top-logo {
             text-align: center;
             margin-bottom: 15px;
         }
-
         .top-info {
             text-align: center;
             margin-bottom: 25px;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -31,18 +27,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
             margin-bottom: 40px;
         }
-
         th, td {
             padding: 12px;
             border: 1px solid #ddd;
             text-align: center;
         }
-
         th {
             background: #2563eb;
             color: white;
         }
-
         .selfie {
             width: 90px;
             height: 70px;
@@ -50,7 +43,6 @@
             border-radius: 8px;
             border: 1px solid #ccc;
         }
-
         .empty {
             text-align: center;
             font-size: 18px;
@@ -69,6 +61,8 @@
         <p>Date: {{ today }}</p>
         <p>
             <a href="/employees">Manage Employees</a> |
+            <a href="/weekly_report">Weekly Report</a> |
+            <a href="/monthly_report">Monthly Report</a> |
             <a href="/logout">Logout</a>
         </p>
     </div>
@@ -79,6 +73,7 @@
         <tr>
             <th>Employee ID</th>
             <th>Name</th>
+            <th>City</th>
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
@@ -96,9 +91,10 @@
             <td>{{ record[4] }}</td>
             <td>{{ record[5] }}</td>
             <td>{{ record[6] }}</td>
+            <td>{{ record[7] }}</td>
             <td>
-                {% if record[7] %}
-                <img class="selfie" src="/{{ record[7] }}" alt="Selfie">
+                {% if record[8] %}
+                <img class="selfie" src="/{{ record[8] }}" alt="Selfie">
                 {% else %}
                 No selfie
                 {% endif %}
@@ -116,6 +112,7 @@
         <tr>
             <th>Employee ID</th>
             <th>Name</th>
+            <th>City</th>
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
@@ -133,9 +130,10 @@
             <td>{{ record[4] }}</td>
             <td>{{ record[5] }}</td>
             <td>{{ record[6] }}</td>
+            <td>{{ record[7] }}</td>
             <td>
-                {% if record[7] %}
-                <img class="selfie" src="/{{ record[7] }}" alt="Selfie">
+                {% if record[8] %}
+                <img class="selfie" src="/{{ record[8] }}" alt="Selfie">
                 {% else %}
                 No selfie
                 {% endif %}
