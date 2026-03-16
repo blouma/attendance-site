@@ -200,10 +200,15 @@ def finalize_checkin():
     header, encoded = selfie_data.split(",", 1)
     image_bytes = base64.b64decode(encoded)
 
-    filename = f"employee_{employee_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
-    filepath = os.path.join("static", "selfies", filename)
+   filename = f"employee_{employee_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
 
-    with open(filepath, "wb") as f:
+    selfies_folder = os.path.join(app.root_path, "static", "selfies")
+    os.makedirs(selfies_folder, exist_ok=True)
+
+    full_filepath = os.path.join(selfies_folder, filename)
+    filepath = f"static/selfies/{filename}"
+
+    with open(full_filepath, "wb") as f:
         f.write(image_bytes)
 
     conn = sqlite3.connect("attendance.db")
