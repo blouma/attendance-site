@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weekly Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .top {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background: #2563eb;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weekly Absence Report</h1>
+    <div class="top">
+        <p>From {{ start_date }} to {{ end_date }}</p>
+        <p><a href="/admin">Back to Admin</a></p>
+    </div>
+
+    <table>
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>City</th>
+            <th>Absent Days</th>
+            <th>Absent Dates</th>
+        </tr>
+        {% for row in records %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] or 0 }}</td>
+            <td>{{ row[4] or '' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
