@@ -52,7 +52,9 @@ def init_db():
     conn.commit()
     conn.close()
 
-
+@app.before_request
+def setup_once():
+    init_db()
 @app.route("/", methods=["GET", "POST"])
 def index():
     message = ""
@@ -255,7 +257,6 @@ def finalize_checkin():
     return f"<h1>Attendance recorded: {status}</h1><a href='/'>Go back</a>"
 
 
-init_db()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
