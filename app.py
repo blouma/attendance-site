@@ -9,6 +9,8 @@ app = Flask(__name__)
 app.secret_key = "mysecretkey"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
+db_initialized = False
+
 
 def init_db():
     conn = sqlite3.connect("attendance.db")
@@ -52,11 +54,17 @@ def init_db():
     conn.commit()
     conn.close()
 
-@app.before_request
-def setup_once():
-    init_db()
+
+def ensure_db_initialized():
+    global db_initialized
+    if not db_initialized:
+        init_db()
+        db_initialized = True
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
+    ensure_db_initialized()
     message = ""
 
     if request.method == "POST":
@@ -78,16 +86,14 @@ def index():
 
 @app.route("/verify", methods=["POST"])
 def verify():
+    ensure_db_initialized()
     employee_id = request.form["employee_id"]
-    entered_code = request.form["code"]
-
-    # kept only so route exists if any old page still posts here
-    # right now the main flow goes directly from index -> checkin
     return render_template("checkin.html", employee_id=employee_id)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    ensure_db_initialized()
     message = ""
 
     if request.method == "POST":
@@ -105,6 +111,7 @@ def login():
 
 @app.route("/admin")
 def admin():
+    ensure_db_initialized()
     if not session.get("admin_logged_in"):
         return redirect(url_for("login"))
 
@@ -163,6 +170,7 @@ def logout():
 
 @app.route("/employees", methods=["GET", "POST"])
 def employees():
+    ensure_db_initialized()
     if not session.get("admin_logged_in"):
         return redirect(url_for("login"))
 
@@ -191,6 +199,7 @@ def employees():
 
 @app.route("/finalize_checkin", methods=["POST"])
 def finalize_checkin():
+    ensure_db_initialized()
     employee_id = request.form["employee_id"]
     latitude = request.form["latitude"]
     longitude = request.form["longitude"]
@@ -255,7 +264,6 @@ def finalize_checkin():
     conn.close()
 
     return f"<h1>Attendance recorded: {status}</h1><a href='/'>Go back</a>"
-
 
 
 if __name__ == "__main__":
