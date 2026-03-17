@@ -528,7 +528,7 @@ def monthly_report():
            AND attendance.status = 'Absent'
            AND attendance.date LIKE ?
         GROUP BY employees.id, employees.name, employees.city
-        ORDER BY employees.id
+        ORDER BY employees.city, employees.id
     """, (f"{current_month}%",))
 
     records = cur.fetchall()
