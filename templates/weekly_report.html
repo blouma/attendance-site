@@ -9,7 +9,7 @@
             margin: 0;
             padding: 30px;
         }
-        h1 {
+        h1, h2 {
             text-align: center;
         }
         .top {
@@ -21,6 +21,7 @@
             border-collapse: collapse;
             background: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            margin-bottom: 30px;
         }
         th, td {
             padding: 12px;
@@ -40,15 +41,23 @@
         <p><a href="/admin">Back to Admin</a></p>
     </div>
 
-    <table>
-        <tr>
-            <th>Employee ID</th>
-            <th>Name</th>
-            <th>City</th>
-            <th>Absent Days</th>
-            <th>Absent Dates</th>
-        </tr>
-        {% for row in records %}
+    {% set ns = namespace(current_city='') %}
+    {% for row in records %}
+        {% if row[2] != ns.current_city %}
+            {% if not loop.first %}
+                </table>
+            {% endif %}
+            {% set ns.current_city = row[2] %}
+            <h2>{{ ns.current_city }}</h2>
+            <table>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Absent Days</th>
+                    <th>Absent Dates</th>
+                </tr>
+        {% endif %}
         <tr>
             <td>{{ row[0] }}</td>
             <td>{{ row[1] }}</td>
@@ -56,7 +65,9 @@
             <td>{{ row[3] or 0 }}</td>
             <td>{{ row[4] or '' }}</td>
         </tr>
-        {% endfor %}
-    </table>
+        {% if loop.last %}
+            </table>
+        {% endif %}
+    {% endfor %}
 </body>
 </html>
