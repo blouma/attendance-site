@@ -539,7 +539,27 @@ def monthly_report():
         records=records,
         current_month=current_month
     )
+@app.route("/clear_today_absent")
+def clear_today_absent():
+    ensure_db_initialized()
 
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("login"))
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    conn = sqlite3.connect("attendance.db")
+    cur = conn.cursor()
+
+    cur.execute("""
+        DELETE FROM attendance
+        WHERE date = ? AND status = 'Absent'
+    """, (today,))
+
+    conn.commit()
+    conn.close()
+
+    return "<h1>Today's absent records were deleted.</h1><a href='/admin'>Back to Admin</a>"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
