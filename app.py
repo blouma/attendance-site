@@ -359,7 +359,7 @@ def employees():
         except sqlite3.IntegrityError:
             message = "This employee ID already exists."
 
-    cur.execute("SELECT id, name, city FROM employees ORDER BY id")
+    cur.execute("SELECT id, name, city FROM employees ORDER BY city, id")
     all_employees = cur.fetchall()
     conn.close()
 
@@ -369,7 +369,6 @@ def employees():
         message=message,
         cities=sorted(CITY_COORDS.keys())
     )
-
 
 @app.route("/finalize_checkin", methods=["POST"])
 def finalize_checkin():
