@@ -19,7 +19,7 @@ ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "amine2004"
 
 ATTENDANCE_START = "08:00"
-ATTENDANCE_END = "10:00"
+ATTENDANCE_END = "17:00"
 
 # Tolerance radius in meters
 # Increase or decrease this if you want
