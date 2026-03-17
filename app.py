@@ -139,31 +139,32 @@ def init_db():
     )
     """)
 
-    # Add city column if it doesn't exist yet
     cur.execute("PRAGMA table_info(employees)")
     columns = [row[1] for row in cur.fetchall()]
     if "city" not in columns:
         cur.execute("ALTER TABLE employees ADD COLUMN city TEXT")
 
-    # Import from Excel if file exists
-    try:
-        df = pd.read_excel("employees.xlsx")
+    excel_files = ["employees.xlsx", "employees liste 2.xlsx"]
 
-        for _, row in df.iterrows():
-            employee_id = int(row["Matricule"])
-            employee_name = str(row["Nom & Prénom"]).strip()
-            employee_city = extract_city_from_row(row)
+    for file_name in excel_files:
+        try:
+            df = pd.read_excel(file_name)
 
-            cur.execute("""
-                INSERT INTO employees (id, name, city)
-                VALUES (?, ?, ?)
-                ON CONFLICT(id) DO UPDATE SET
-                    name = excluded.name,
-                    city = excluded.city
-            """, (employee_id, employee_name, employee_city))
+            for _, row in df.iterrows():
+                employee_id = int(row["Matricule"])
+                employee_name = str(row["Nom & Prénom"]).strip()
+                employee_city = extract_city_from_row(row)
 
-    except Exception as e:
-        print("Excel import skipped or failed:", e)
+                cur.execute("""
+                    INSERT INTO employees (id, name, city)
+                    VALUES (?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        name = excluded.name,
+                        city = excluded.city
+                """, (employee_id, employee_name, employee_city))
+
+        except Exception as e:
+            print(f"Excel import skipped or failed for {file_name}:", e)
 
     conn.commit()
     conn.close()
