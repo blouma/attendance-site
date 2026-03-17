@@ -151,24 +151,44 @@ def init_db():
             df = pd.read_excel(file_name)
 
             for _, row in df.iterrows():
-                employee_id = int(row["Matricule"])
-                employee_name = str(row["Nom & Prénom"]).strip()
-                employee_city = extract_city_from_row(row)
+                employee_id = None
+                employee_name = None
+                employee_city = None
 
-                cur.execute("""
-                    INSERT INTO employees (id, name, city)
-                    VALUES (?, ?, ?)
-                    ON CONFLICT(id) DO UPDATE SET
-                        name = excluded.name,
-                        city = excluded.city
-                """, (employee_id, employee_name, employee_city))
+                # file 1 style
+                if "Matricule" in df.columns:
+                    employee_id = int(row["Matricule"])
+
+                # file 2 style
+                elif "MAT" in df.columns:
+                    employee_id = int(row["MAT"])
+
+                if "Nom & Prénom" in df.columns:
+                    employee_name = str(row["Nom & Prénom"]).strip()
+                elif "NOM & PRENOM" in df.columns:
+                    employee_name = str(row["NOM & PRENOM"]).strip()
+
+                if "localité" in df.columns:
+                    employee_city = normalize_city(row["localité"])
+                elif "Localité" in df.columns:
+                    employee_city = normalize_city(row["Localité"])
+                elif "location" in df.columns:
+                    employee_city = normalize_city(row["location"])
+
+                if employee_id and employee_name:
+                    cur.execute("""
+                        INSERT INTO employees (id, name, city)
+                        VALUES (?, ?, ?)
+                        ON CONFLICT(id) DO UPDATE SET
+                            name = excluded.name,
+                            city = excluded.city
+                    """, (employee_id, employee_name, employee_city))
 
         except Exception as e:
             print(f"Excel import skipped or failed for {file_name}:", e)
 
     conn.commit()
     conn.close()
-
 
 def ensure_db_initialized():
     global db_initialized
