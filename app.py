@@ -36,14 +36,23 @@ CITY_COORDS = {
 # if your Excel uses one of these headers for city, it will work
 POSSIBLE_CITY_COLUMNS = [
     "Ville",
+    "ville",
     "City",
+    "city",
     "Localité",
+    "localité",
     "Localite",
+    "localite",
     "Affectation",
+    "affectation",
     "Centre",
+    "centre",
     "Bureau",
+    "bureau",
     "Lieu",
+    "lieu",
     "Site",
+    "site",
 ]
 
 
