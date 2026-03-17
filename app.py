@@ -490,7 +490,7 @@ def weekly_report():
            AND attendance.status = 'Absent'
            AND attendance.date BETWEEN ? AND ?
         GROUP BY employees.id, employees.name, employees.city
-        ORDER BY employees.id
+        ORDER BY employees.city, employees.id
     """, (start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")))
 
     records = cur.fetchall()
@@ -502,7 +502,6 @@ def weekly_report():
         start_date=start_date.strftime("%Y-%m-%d"),
         end_date=end_date.strftime("%Y-%m-%d")
     )
-
 
 @app.route("/monthly_report")
 def monthly_report():
