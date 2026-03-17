@@ -23,7 +23,7 @@ ATTENDANCE_END = "10:00"
 
 # Tolerance radius in meters
 # Increase or decrease this if you want
-ATTENDANCE_RADIUS_METERS = 800
+ATTENDANCE_RADIUS_METERS = 1000
 
 CITY_COORDS = {
     "MIDELT": (32.6794074, -4.7391958),
